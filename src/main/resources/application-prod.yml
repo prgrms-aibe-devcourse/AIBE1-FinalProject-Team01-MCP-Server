@@ -1,0 +1,68 @@
+spring:
+  main:
+    banner-mode: off
+  ai:
+    mcp:
+      server:
+        name: amateurs-mcp-server
+        version: 1.0.0
+        type: sync
+        sse-endpoint: /sse
+        sse-message-endpoint: /mcp/messages
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+    validate-on-migrate: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    info:
+      access: read_only
+  otlp:
+    metrics:
+      export:
+        enabled: false
+
+logging:
+  level:
+    root: info
+    org.springframework: info
+
+otel:
+  service:
+    name: amateurs-mcp-server
+  traces:
+    exporter: otlp
+    sampler: parentbased_traceidratio
+    sampler.arg: 1.0
+  metrics:
+    exporter: otlp
+  logs:
+    exporter: otlp
+  instrumentation:
+    micrometer:
+      enabled: true
+
+  exporter:
+    otlp:
+      endpoint: ${OTEL_COLLECTOR_URL}
+      compression: gzip
+      timeout: 10s

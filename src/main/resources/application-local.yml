@@ -1,0 +1,37 @@
+spring:
+  main:
+    banner-mode: off
+  ai:
+    mcp:
+      server:
+        name: amateurs-mcp-server
+        version: 1.0.0
+        type: sync
+        sse-endpoint: /sse
+        sse-message-endpoint: /mcp/messages
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNANE}
+    password: ${DB_PASSWORD}
+
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+  output:
+    ansi:
+      enabled: always
+
+otel:
+  service:
+    name: amateurs-mcp-server
+  traces:
+    exporter: console
+  metrics:
+    exporter: none
+  logs:
+    exporter: none
