@@ -1,5 +1,5 @@
-import org.gradle.kotlin.dsl.implementation
-import org.jooq.meta.jaxb.*
+import org.jooq.meta.jaxb.ForcedType
+import org.jooq.meta.jaxb.Generate
 
 plugins {
     kotlin("jvm") version "1.9.25"
@@ -7,6 +7,7 @@ plugins {
     id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
     id("dev.monosoul.jooq-docker") version "6.1.9"
+    id("jacoco")
 }
 
 group = "kr.co.amateurs"
@@ -55,6 +56,74 @@ jooq {
                 schema = "jdbc:mysql"
                 driverClassName = "com.mysql.cj.jdbc.Driver"
             }
+        }
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+    reportsDirectory = layout.buildDirectory.dir("reports/jacoco")
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = true
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.map {
+            fileTree(it) {
+                exclude(
+                    "**/generated/**",
+
+                    "**/config/**",
+                    "**/domain/**",
+                    "**/exception/**",
+                    "**/handler/**",
+                    "**/repository/**",
+                    "**/utils/**",
+
+                    "**/*Application.*",
+                )
+            }
+        }))
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+
+    violationRules {
+        rule {
+            limit {
+                counter = "INSTRUCTION"
+                value = "COVEREDRATIO"
+                minimum = "0.50".toBigDecimal()
+            }
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.50".toBigDecimal()
+            }
+        }
+
+        rule {
+            element = "CLASS"
+            limit {
+                counter = "INSTRUCTION"
+                value = "COVEREDRATIO"
+                minimum = "0.50".toBigDecimal()
+            }
+
+            excludes = listOf(
+                "*.Application",
+                "*.Config*",
+                "*.Configuration*"
+            )
         }
     }
 }
@@ -109,6 +178,10 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.1")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.1")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+    testImplementation("io.kotest:kotest-property:5.8.1")
     runtimeOnly("com.mysql:mysql-connector-j")
     runtimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -142,7 +215,7 @@ kotlin {
     }
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
