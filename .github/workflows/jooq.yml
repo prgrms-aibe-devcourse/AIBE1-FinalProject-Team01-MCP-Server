@@ -46,7 +46,7 @@ jobs:
           path: |
             src/generated/
             .gradle/jooq-docker/
-          key: jooq-${{ hashFiles('src/main/resources/db/migration/*.sql', 'build.gradle') }}
+          key: jooq-${{ hashFiles('src/main/resources/db/migration/*.sql', 'build.gradle', 'build.gradle.kts') }}
           restore-keys: |
             jooq-
 

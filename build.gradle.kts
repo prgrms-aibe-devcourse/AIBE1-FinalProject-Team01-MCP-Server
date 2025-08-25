@@ -12,6 +12,7 @@ plugins {
 group = "kr.co.amateurs"
 version = "0.0.1-SNAPSHOT"
 val jooqVersion = "3.19.15"
+val kotestVersion = "5.8.1"
 
 java {
     toolchain {
@@ -109,10 +110,10 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("io.kotest:kotest-runner-junit5:6.0.0")
-    testImplementation("io.kotest:kotest-assertions-core:6.0.0")
-    testImplementation("io.kotest:kotest-property:6.0.0")
-    testImplementation("io.kotest:kotest-extensions-spring:6.0.0")
+    testImplementation("io.kotest:kotest-runner-junit5:${kotestVersion}")
+    testImplementation("io.kotest:kotest-assertions-core:${kotestVersion}")
+    testImplementation("io.kotest:kotest-property:${kotestVersion}")
+    testImplementation("io.kotest:kotest-extensions-spring:${kotestVersion}")
     runtimeOnly("com.mysql:mysql-connector-j")
     runtimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
