@@ -26,7 +26,7 @@ class PostService(
 
     @Tool(
         name = "search_posts_by_nickname", description = """
-        유저의 닉네임과 일치하는 게시글 목록을 검색합니다.
+        작성자 닉네임과 일치하는 게시글 목록을 검색합니다.
     """
     )
     fun searchByNickname(

@@ -4,7 +4,5 @@ import org.springframework.stereotype.Component
 
 @Component
 class PostQueryFactory {
-    fun <T> buildQuery(
-        query: PostQuery<T>
-    ) = query.execute()
+    fun <T> buildQuery(query: PostQuery<T>) = query.execute()
 }
