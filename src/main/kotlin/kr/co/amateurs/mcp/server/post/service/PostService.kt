@@ -1,14 +1,18 @@
 package kr.co.amateurs.mcp.server.post.service
 
+import jakarta.validation.Validator
 import kr.co.amateurs.mcp.server.post.dto.request.PostSearchParams
+import kr.co.amateurs.mcp.server.post.dto.response.PostResponseDTO
 import kr.co.amateurs.mcp.server.post.repository.PostRepository
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
 @Service
 class PostService(
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val validator: Validator
 ) {
     @Tool(
         name = "search_posts", description = """
@@ -22,7 +26,15 @@ class PostService(
             """
         )
         params: PostSearchParams
-    ) = postRepository.findAll(params)
+    ): Page<PostResponseDTO> {
+        val violations = validator.validate(params)
+
+        if (violations.isNotEmpty()) {
+            throw IllegalArgumentException(violations.iterator().next().message)
+        }
+
+        return postRepository.findAll(params)
+    }
 
     @Tool(
         name = "search_posts_by_nickname", description = """
@@ -36,5 +48,13 @@ class PostService(
             """
         )
         params: PostSearchParams
-    ) = postRepository.findAllByNickname(params)
+    ): Page<PostResponseDTO> {
+        val violations = validator.validate(params)
+
+        if (violations.isNotEmpty()) {
+            throw IllegalArgumentException(violations.iterator().next().message)
+        }
+
+        return postRepository.findAllByNickname(params)
+    }
 }

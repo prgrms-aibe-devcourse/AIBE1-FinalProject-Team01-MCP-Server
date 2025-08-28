@@ -144,7 +144,7 @@ class PostServiceTest(
                     )
 
                     shouldThrow<Exception> {
-                        postService.searchPosts(params)
+                        postService.searchByNickname(params)
                     }
                 }
             }
