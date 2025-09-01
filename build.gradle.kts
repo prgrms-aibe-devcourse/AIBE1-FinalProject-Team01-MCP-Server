@@ -216,7 +216,9 @@ tasks.withType<Test>().configureEach {
 }
 
 tasks.compileKotlin {
-    dependsOn("generateJooqClasses")
+    if (System.getenv("DOCKER_BUILD").isNullOrEmpty()) {
+        dependsOn("generateJooqClasses")
+    }
 }
 
 tasks.clean {

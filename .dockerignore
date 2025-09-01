@@ -1,0 +1,14 @@
+build/
+.gradle/
+
+*.md
+docs/
+
+Dockerfile*
+.dockerignore
+
+.env*
+.env.local
+
+*.log
+logs/
