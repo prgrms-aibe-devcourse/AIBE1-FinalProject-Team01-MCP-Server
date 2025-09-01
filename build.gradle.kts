@@ -69,29 +69,24 @@ tasks.jacocoTestReport {
     dependsOn(tasks.test)
 
     reports {
-        xml.required = true
-        html.required = true
-        csv.required = true
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(true)
     }
 
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.map {
-            fileTree(it) {
-                exclude(
-                    "**/generated/**",
-
-                    "**/config/**",
-                    "**/domain/**",
-                    "**/exception/**",
-                    "**/handler/**",
-                    "**/repository/**",
-                    "**/utils/**",
-
-                    "**/*Application.*",
-                )
-            }
-        }))
-    }
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude(
+                "**/generated/**",
+                "**/domain/**",
+                "**/exception/**",
+                "**/handler/**",
+                "**/repository/**",
+                "**/utils/**",
+                "**/*Application.*",
+            )
+        }
+    )
 }
 
 tasks.jacocoTestCoverageVerification {
@@ -121,8 +116,6 @@ tasks.jacocoTestCoverageVerification {
 
             excludes = listOf(
                 "*.Application",
-                "*.Config*",
-                "*.Configuration*"
             )
         }
     }
@@ -219,6 +212,7 @@ kotlin {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.compileKotlin {
