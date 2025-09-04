@@ -215,10 +215,8 @@ tasks.withType<Test>().configureEach {
     finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.compileKotlin {
-    if (System.getenv("DOCKER_BUILD").isNullOrEmpty()) {
-        dependsOn("generateJooqClasses")
-    }
+tasks.named("generateJooqClasses") {
+    enabled = System.getenv("DOCKER_BUILD").isNullOrEmpty()
 }
 
 tasks.clean {
